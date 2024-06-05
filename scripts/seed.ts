@@ -4,11 +4,12 @@ const database = new PrismaClient();
 
 async function main() {
   try {
-    await database.category.createMany({
+    await database.category.deleteMany({
       data: [
         { name: "Programação" },
         { name: "Inglês" },
         { name: "Português" },
+        { name: "Outro" },
       ]
     });
 
