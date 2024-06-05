@@ -11,13 +11,6 @@ import { ImageIcon, Pencil, PlusCircle } from "lucide-react";
 import { Course } from "@prisma/client";
 import { useRouter } from "next/navigation";
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage
-} from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/file-upload";
 

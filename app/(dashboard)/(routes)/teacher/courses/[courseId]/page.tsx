@@ -1,4 +1,4 @@
-import { CircleDollarSign, LayoutDashboard, ListChecks } from "lucide-react";
+import { CircleDollarSign, File, LayoutDashboard, ListChecks } from "lucide-react";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
@@ -10,6 +10,7 @@ import { DescriptionForm } from "./_components/description-form";
 import { ImageForm } from "./_components/image-form";
 import { CategoryForm } from "./_components/category-form";
 import { PriceForm } from "./_components/price-form";
+import { AttachmentForm } from "./_components/attachment-form";
 
 const CourseIdPage = async ({
   params
@@ -18,7 +19,7 @@ const CourseIdPage = async ({
     courseId: string;
   }
 }) => {
-  const { userId } = auth(); 
+  const { userId } = auth();
 
   if (!userId) {
     redirect("/");
@@ -27,6 +28,13 @@ const CourseIdPage = async ({
   const course = await db.course.findUnique({
     where: {
       id: params.courseId
+    },
+    include: {
+      attachments: {
+        orderBy: {
+          createdAt: "desc",
+        }
+      }
     }
   });
 
@@ -51,7 +59,7 @@ const CourseIdPage = async ({
   const totalFields = requiredFiels.length;
   const completedFields = requiredFiels.filter(Boolean).length;
 
-  const completionText = `(${completedFields}/${totalFields})` 
+  const completionText = `(${completedFields}/${totalFields})`
 
   return (
     <div className="p-6">
@@ -77,11 +85,11 @@ const CourseIdPage = async ({
             initialData={course}
             courseId={course.id}
           />
-           <DescriptionForm
+          <DescriptionForm
             initialData={course}
             courseId={course.id}
           />
-          <ImageForm 
+          <ImageForm
             initialData={course}
             courseId={course.id}
           />
@@ -116,10 +124,20 @@ const CourseIdPage = async ({
             initialData={course}
             courseId={course.id}
           />
+          <div className="flex items-center gap-x-2">
+            <IconBadge icon={File} />
+            <h2 className="text-xl">
+              Recursos & Anexos
+            </h2>
+          </div>
+          <AttachmentForm
+            initialData={course}
+            courseId={course.id}
+          />
         </div>
       </div>
     </div>
-  );
+  );  
 }
 
 export default CourseIdPage;
