@@ -89,7 +89,7 @@ model UserProgress {
 }
 
 model MuxData {
-  id       String  @default(uuid())
+  id       String  @id @default(uuid())
   assetId  String
   playback String?
 
