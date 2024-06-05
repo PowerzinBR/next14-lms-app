@@ -77,6 +77,7 @@ const CreatePage = () => {
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
                   <FormDescription>
                     Oque você vai ensinar neste curso?
                   </FormDescription>
