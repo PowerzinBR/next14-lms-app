@@ -2,11 +2,12 @@
 
 import * as z from "zod";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { Pencil } from "lucide-react";
-import toast from "react-hot-toast";
+import { Course } from "@prisma/client";
 import { useRouter } from "next/navigation";
 
 import {
@@ -21,9 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
 interface DescriptionFormProps {
-  initialData: {
-    description: string
-  };
+  initialData: Course;
   courseId: string;
 };
 
@@ -45,7 +44,9 @@ export const DescriptionForm = ({
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData
+    defaultValues: {
+      description: initialData?.description || "",
+    }
   });
 
   const { isSubmitting, isValid } = form.formState;
