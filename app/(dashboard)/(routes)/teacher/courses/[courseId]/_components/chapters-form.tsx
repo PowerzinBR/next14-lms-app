@@ -29,7 +29,7 @@ interface ChaptersFormProps {
 
 const formSchema = z.object({
   title: z.string().min(1, {
-    message: "O título é obrigatório"
+    message: "O nome é obrigatório"
   })
 })
 
@@ -41,7 +41,7 @@ export const ChaptersForm = ({
   const [isUpdating, setIsUpdating] = useState(false);
 
   const toggleCreating = () => {
-    setIsUpdating((current) => !current);
+    setIsCreating((current) => !current);
   }
 
   const router = useRouter();
