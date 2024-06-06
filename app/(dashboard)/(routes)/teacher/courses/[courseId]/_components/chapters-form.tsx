@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { Plus, PlusCircle, Pencil } from "lucide-react";
+import { PlusCircle, Loader2 } from "lucide-react";
 import { Chapter, Course } from "@prisma/client";
 import { useRouter } from "next/navigation";
 
@@ -64,14 +64,40 @@ export const ChaptersForm = ({
     } catch {
       toast.error("Algo deu errado");
     }
+  };
+
+  const onReorder = async (updatedData: { id: string, position: number}[]) => {
+    try {
+      setIsUpdating(true);
+
+      await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
+        list: updatedData
+      });
+
+      toast.success("Capítulos reorganizados");
+      router.refresh();
+    } catch {
+      toast.error("Algo deu errado");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const onEdit = (id: string) => {
+    router.push(`/teacher/courses/${courseId}/chapters/${id}`);
   }
 
   return (
-    <div className="mt-6 border bg-slate-100 rounded-md p-4">
+    <div className="relative mt-6 border bg-slate-100 rounded-md p-4">
+      {isUpdating && (
+        <div className="absolute h-full w-full bg-slate-500/20 top-0 right-0 rounded-md flex items-center justify-center">
+          <Loader2 className="animate-spin h-6 w-6 text-sky-700" />
+        </div>
+      )}
       <div className="font-medium flex items-center justify-between">
         Capítulos do curso
         <Button onClick={toggleCreating} variant="ghost">
-          {isUpdating ? (
+          {isCreating ? (
             <>Cancelar</>
           ) : (
             <>
@@ -81,7 +107,7 @@ export const ChaptersForm = ({
           )}
         </Button>
       </div>
-      {isUpdating && (
+      {isCreating && (
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -119,8 +145,8 @@ export const ChaptersForm = ({
         )}>
           {!initialData.chapters.length && "Nenhum capítulo"}
           <ChaptersList 
-            onEdit={() => {}}
-            onReorder={() => {}}
+            onEdit={onEdit}
+            onReorder={onReorder}
             items={initialData.chapters || []}
           />
         </div>
