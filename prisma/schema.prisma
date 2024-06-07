@@ -1,11 +1,12 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+}
+
 datasource db {
   provider     = "mysql"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 
 model Course {
@@ -18,8 +19,8 @@ model Course {
   isPublished Boolean @default(false)
 
   categoryId String?
-  category   Category? @relation(fields: [categoryId], references: [id])
 
+  category    Category?    @relation(fields: [categoryId], references: [id])
   chapters    Chapter[]
   attachments Attachment[]
   purchases   Purchase[]
@@ -28,6 +29,7 @@ model Course {
   updatedAt DateTime @updatedAt
 
   @@index([categoryId])
+  @@fulltext([title])
 }
 
 model Category {
@@ -72,6 +74,15 @@ model Chapter {
   @@index([courseId])
 }
 
+model MuxData {
+  id         String  @id @default(uuid())
+  assetId    String
+  playbackId String?
+
+  chapterId String  @unique
+  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+}
+
 model UserProgress {
   id     String @id @default(uuid())
   userId String
@@ -88,15 +99,6 @@ model UserProgress {
   @@index([chapterId])
 }
 
-model MuxData {
-  id       String  @id @default(uuid())
-  assetId  String
-  playback String?
-
-  chapterId String  @unique
-  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-}
-
 model Purchase {
   id     String @id @default(uuid())
   userId String
@@ -105,8 +107,9 @@ model Purchase {
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt()
 
+  @@unique([userId, courseId])
   @@index([courseId])
 }
 
