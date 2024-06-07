@@ -105,7 +105,7 @@ const ChapterIdPage = async ({
                     key={attachment.id}
                     target="_blank"
                   >
-                    <File />
+                    <File className="mr-2 h-4 w-4" />
                     <p className="line-clamp-1">{attachment.name}</p>
                   </a>
                 ))}
