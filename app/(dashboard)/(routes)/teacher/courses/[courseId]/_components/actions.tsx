@@ -1,44 +1,42 @@
 "use client";
 
 import axios from "axios";
+import { Trash } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import { Trash } from "lucide-react";
 
 import { ConfirmModal } from "@/components/modals/confirm-modal";
 import { Button } from "@/components/ui/button";
+import { useConfettiStore } from "@/hooks/use-conffeti";
 
-interface ChapterActionsProps {
+interface ActionsProps {
   disabled: boolean;
   courseId: string;
-  chapterId: string;
   isPublished: boolean;
 }
 
-export const ChapterActions = ({
+export const Actions = ({
   disabled,
   courseId,
-  chapterId,
+
   isPublished,
-}: ChapterActionsProps) => {
+}: ActionsProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const confetti = useConfettiStore();
 
   const onPublish = async () => {
     try {
       setIsLoading(true);
 
       if (isPublished) {
-        await axios.patch(
-          `/api/courses/${courseId}/chapters/${chapterId}/unpublish`
-        );
-        toast.success("Capítulo não está mais publicado");
+        await axios.patch(`/api/courses/${courseId}/unpublish`);
+        toast.success("Curso despublicado");
       } else {
-        await axios.patch(
-          `/api/courses/${courseId}/chapters/${chapterId}/publish`
-        );
-        toast.success("Capítulo publicado");
+        await axios.patch(`/api/courses/${courseId}/publish`);
+        toast.success("Curso despublicado");
+        confetti.onOpen();
       }
       router.refresh();
     } catch (error) {
@@ -51,10 +49,10 @@ export const ChapterActions = ({
   const onDelete = async () => {
     try {
       setIsLoading(true);
-      await axios.delete(`/api/courses/${courseId}/chapters/${chapterId}`);
-      toast.success("Capítulo excluído");
+      await axios.delete(`/api/courses/${courseId}`);
+      toast.success("Curso excluído");
       router.refresh();
-      router.push(`/teacher/courses/${courseId}`);
+      router.push(`/teacher/courses`);
     } catch (error) {
       toast.error("Algo deu errado");
     } finally {
